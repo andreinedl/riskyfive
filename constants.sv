@@ -40,9 +40,10 @@
 `define I_TYPE_OPCODE               7'b0010011
 `define S_TYPE_OPCODE               7'b0100011
 `define B_TYPE_OPCODE               7'b1100011
-`define U_TYPE_OPCODE               7'b0110111
+`define U_TYPE_OPCODE_LUI           7'b0110111
+`define U_TYPE_OPCODE_AUIPC         7'b0010111
 `define J_TYPE_OPCODE               7'b1101111
 `define I_TYPE_OPCODE_JALR          7'b1100111
-
+`define I_TYPE_OPCODE_LOAD          7'b0000011
 
 `endif RISCV_CONSTANTS

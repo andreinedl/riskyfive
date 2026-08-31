@@ -18,15 +18,15 @@ always_comb
         `B_TYPE_OPCODE:      
             imm_o = { {19{instr_i[31]}}, instr_i[31], instr_i[7], instr_i[30:25], instr_i[11:8], 1'b0 };
 
-        `U_TYPE_OPCODE:      
+        `U_TYPE_OPCODE_LUI, `U_TYPE_OPCODE_AUIPC:   
             imm_o = { instr_i[31:12], 12'b0 };
 
         `J_TYPE_OPCODE:      
             imm_o = { {11{instr_i[31]}}, instr_i[31], instr_i[19:12], instr_i[20], instr_i[30:21], 1'b0 };
 
-        `I_TYPE_OPCODE_JALR: 
+        `I_TYPE_OPCODE_JALR, I_TYPE_OPCODE_LOAD: 
             imm_o = { {20{instr_i[31]}}, instr_i[31:20] };
-
+            
         default: imm_o = 32'd0;
     endcase
 
