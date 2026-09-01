@@ -9,7 +9,7 @@ package riscv_pkg;
     } alu_opcode_e;
 
     // ALU Funct3
-    typedef enum logic [2 - 1:0] {
+    typedef enum logic [3 - 1:0] {
         FUNCT3_ALU_ADD_SUB    = 3'b000,
         FUNCT3_ALU_SLL        = 3'b001,
         FUNCT3_ALU_SLT        = 3'b010,
