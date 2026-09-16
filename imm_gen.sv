@@ -5,7 +5,7 @@ module imm_gen(
     output logic [32 - 1:0] imm_o
 );
 
-opcode_e opcode = instr_i[6:0];
+opcode_e opcode = opcode_e'(instr_i[6:0]);
 
 always_comb
     case (opcode)
@@ -30,4 +30,4 @@ always_comb
         default: imm_o = 32'd0;
     endcase
 
-endmodule 
+endmodule

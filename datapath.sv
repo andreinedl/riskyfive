@@ -3,15 +3,6 @@ import riscv_pkg::*;
 module datapath(
     input logic clk_i,
     input logic rst_ni,
-    
-    // instructions memory
-    /*output logic [32 - 1:0] pc_o,
-    input  logic [32 - 1:0] instr_i,*/
-
-    // RAM (WIP)
-    output logic [32 - 1:0] ram_addr_o,
-    output logic [32 - 1:0] ram_write_data_o,
-    input  logic [32 - 1:0] ram_read_data_i,
 
     // Control Unit
     input  alu_a_src_e      ctrl_alu_a_src_i,
@@ -23,18 +14,19 @@ module datapath(
     input  logic            ctrl_mem_write_en_i,
     input  rd_result_src_e  ctrl_rd_result_src_i,
     input  ls_unit_op_e     ctrl_ls_unit_op_i,
-    output logic [7 - 1:0]  decoder_opcode_o
-
+    output logic [7 - 1:0]  decoder_opcode_o,
+    output logic [3 - 1:0]  decoder_funct3_o
 );
 
-logic [3 - 1:0 ] decoder_funct3;
 logic [5 - 1:0 ] decoder_rs1;
 logic [5 - 1:0 ] decoder_rs2;
 logic [5 - 1:0 ] decoder_rd;
 logic [7 - 1:0 ] decoder_funct7;
 
+// ALU
 logic [32 - 1:0] alu_operand_a;
 logic [32 - 1:0] alu_operand_b;
+alu_op_e alu_operation;
 
 logic [32 - 1:0] imm;
 
@@ -86,8 +78,16 @@ always_comb
         default:            reg_rd_data = 'X;
     endcase
 
+alu_control alu_control_inst(
+    .alu_opcode_i   (ctrl_ALUOp_i), 
+    .inst_funct3_i  (decoder_funct3_o),
+    .inst_funct7_i  (decoder_funct7),
+    .alu_operation_o(alu_operation)
+);
+
+
 alu alu_inst(
-    .alu_operation_i(ctrl_ALUOp_i),
+    .alu_operation_i(alu_operation),
     .operand_a_i    (alu_operand_a),
     .operand_b_i    (alu_operand_b),
     .alu_result_o   (alu_result),
@@ -97,7 +97,7 @@ alu alu_inst(
 inst_decoder inst_decoder_inst(
     .instr_i    (instr),
     .opcode_o   (decoder_opcode_o),
-    .funct3_o   (decoder_funct3),
+    .funct3_o   (decoder_funct3_o),
     .rs1_o      (decoder_rs1),
     .rs2_o      (decoder_rs2),
     .rd_o       (decoder_rd),

@@ -16,8 +16,8 @@ always_comb begin
         ALU_OP_ADD:  alu_result_o = operand_a_i + operand_b_i;
         ALU_OP_SUB:  alu_result_o = operand_a_i - operand_b_i;
         ALU_OP_SLL:  alu_result_o = operand_a_i << shamt;
-        ALU_OP_SLT:  alu_result_o = ($signed(operand_a_i) < $signed(operand_b_i));
-        ALU_OP_SLTU: alu_result_o = (operand_a_i < operand_b_i);
+        ALU_OP_SLT:  alu_result_o = {31'b0, ($signed(operand_a_i) < $signed(operand_b_i))};
+        ALU_OP_SLTU: alu_result_o = {31'b0, (operand_a_i < operand_b_i)};
         ALU_OP_XOR:  alu_result_o = operand_a_i ^ operand_b_i;
         ALU_OP_SRL:  alu_result_o = operand_a_i >> shamt;
         ALU_OP_SRA:  alu_result_o = $signed(operand_a_i) >>> shamt;

@@ -33,7 +33,7 @@ always_comb begin
                 FUNCT3_ALU_AND:      alu_operation_o = ALU_OP_AND;
                 FUNCT3_ALU_OR:       alu_operation_o = ALU_OP_OR;
 
-                default: alu_operation_o = 4'bxxxx;
+                default: alu_operation_o = alu_op_e'(4'bxxxx);
             endcase
         end
 
@@ -52,11 +52,11 @@ always_comb begin
                 FUNCT3_ALU_AND:      alu_operation_o = ALU_OP_AND;
                 FUNCT3_ALU_OR:       alu_operation_o = ALU_OP_OR;
 
-                default: alu_operation_o = 4'bxxxx;
+                default: alu_operation_o = alu_op_e'(4'bxxxx);
             endcase
         end
 
-        default: alu_operation_o = 4'bxxxx;
+        default: alu_operation_o = alu_op_e'(4'bxxxx);
     endcase
 end
     

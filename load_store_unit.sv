@@ -1,3 +1,5 @@
+import riscv_pkg::*;
+
 module load_store_unit(
     input  ls_unit_op_e      ls_unit_opcode_i,
     input  logic [32 - 1:0]  addr_i,
