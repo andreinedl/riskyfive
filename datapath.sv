@@ -142,7 +142,7 @@ load_store_unit lsu_inst(
     .ls_unit_opcode_i(ctrl_ls_unit_op_i),
     .addr_i(alu_result),
 
-    .reg_data_i(reg_rs1_data),
+    .reg_data_i(reg_rs2_data),
     .reg_data_o(lsu_reg_data),
 
     .mem_data_i(mem_read_data),
