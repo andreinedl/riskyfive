@@ -59,10 +59,14 @@ logic [4 - 1:0]  lsu_mem_write_byte_sel; // output by the LSU, it selects which 
 // Data memory wires
 logic [32 - 1:0] mem_read_data; // data output by the memory (read)
 
+// PC jump addr calc
+logic [32 - 1:0] pc_jump_addr = (ctrl_branch_i & alu_zero_flag) ? (pc + imm) : alu_result;
+
+
 always_comb
     case(ctrl_alu_a_src_i)
         ALU_SRC_A_RS1:  alu_operand_a = reg_rs1_data;
-        ALU_SRC_A_PC:   alu_operand_a = pc_o;
+        ALU_SRC_A_PC:   alu_operand_a = pc;
         ALU_SRC_A_ZERO: alu_operand_a = '0;
         default:        alu_operand_a = 'X;
     endcase
@@ -77,7 +81,7 @@ always_comb
 always_comb
     case(ctrl_rd_result_src_i)
         RD_RESULT_SRC_ALU:  reg_rd_data = alu_result;
-        RD_RESULT_SRC_MEM:  reg_rd_data = lsu_mem_data;
+        RD_RESULT_SRC_MEM:  reg_rd_data = lsu_reg_data;
         RD_RESULT_SRC_PC4:  reg_rd_data = pc + 4;
         default:            reg_rd_data = 'X;
     endcase
@@ -108,8 +112,8 @@ imm_gen imm_gen_inst(
 program_counter pc_inst(
     .clk_i(clk_i),
     .rst_ni(rst_ni),
-    .pc_src_i(pc_src), // 0 - PC + 4, 1 - Address from ALU
-    .jump_addr_i(alu_result),
+    .pc_src_i(pc_src), // 0 - PC + 4, 1 - Calculated address
+    .jump_addr_i(pc_jump_addr),
     .pc_o(pc)
 );
 
