@@ -5,8 +5,8 @@ module datapath(
     input logic rst_ni,
     
     // instructions memory
-    output logic [32 - 1:0] pc_o,
-    input  logic [32 - 1:0] instr_i,
+    /*output logic [32 - 1:0] pc_o,
+    input  logic [32 - 1:0] instr_i,*/
 
     // RAM (WIP)
     output logic [32 - 1:0] ram_addr_o,
@@ -22,7 +22,8 @@ module datapath(
     input  logic            ctrl_branch_i,
     input  logic            ctrl_mem_write_en_i,
     input  rd_result_src_e  ctrl_rd_result_src_i,
-    output logic [32 - 1:0] decoder_opcode_o
+    input  ls_unit_op_e     ctrl_ls_unit_op_i,
+    output logic [7 - 1:0]  decoder_opcode_o
 
 );
 
@@ -47,6 +48,16 @@ logic [32 - 1:0] reg_rs2_data;
 logic [32 - 1:0] reg_rd_data;
 
 logic [32 - 1:0] pc;
+logic [32 - 1:0] instr;
+
+// LSU WIRES
+logic [32 - 1:0] lsu_mem_data; // data output by the LSU which goes to the memory (store instruction)
+logic [32 - 1:0] lsu_reg_data; // data output by the LSU which goes to the register (load instruction)
+logic [4 - 1:0]  lsu_mem_write_byte_sel; // output by the LSU, it selects which bytes 
+                                         // should be replaced in the memory using store 
+
+// Data memory wires
+logic [32 - 1:0] mem_read_data; // data output by the memory (read)
 
 always_comb
     case(ctrl_alu_a_src_i)
@@ -66,7 +77,7 @@ always_comb
 always_comb
     case(ctrl_rd_result_src_i)
         RD_RESULT_SRC_ALU:  reg_rd_data = alu_result;
-        //RD_RESULT_SRC_MEM:  reg_rd_data = 
+        RD_RESULT_SRC_MEM:  reg_rd_data = lsu_mem_data;
         RD_RESULT_SRC_PC4:  reg_rd_data = pc + 4;
         default:            reg_rd_data = 'X;
     endcase
@@ -80,7 +91,7 @@ alu alu_inst(
 );
 
 inst_decoder inst_decoder_inst(
-    .instr_i    (instr_i),
+    .instr_i    (instr),
     .opcode_o   (decoder_opcode_o),
     .funct3_o   (decoder_funct3),
     .rs1_o      (decoder_rs1),
@@ -90,7 +101,7 @@ inst_decoder inst_decoder_inst(
 );
 
 imm_gen imm_gen_inst(
-    .instr_i(instr_i),
+    .instr_i(instr),
     .imm_o(imm)
 );
 
@@ -111,6 +122,32 @@ register_file register_file_inst(
     .reg_write_en_i(ctrl_reg_write_en_i),
     .rs1_data_o(reg_rs1_data),
     .rs2_data_o(reg_rs2_data)
+);
+
+instr_mem instr_mem_inst (
+    .addr_i(pc),
+    .instr_o(instr)
+);
+
+data_mem data_mem_inst(
+    .clk_i(clk_i),
+    .write_en_i(ctrl_mem_write_en_i),
+    .addr_i(alu_result),
+    .write_data_i(lsu_mem_data),
+    .mem_write_byte_sel_i(lsu_mem_write_byte_sel),
+    .read_data_o(mem_read_data)
+);
+
+load_store_unit lsu_inst(
+    .ls_unit_opcode_i(ctrl_ls_unit_op_i),
+    .addr_i(alu_result),
+
+    .reg_data_i(reg_rs1_data),
+    .reg_data_o(lsu_reg_data),
+
+    .mem_data_i(mem_read_data),
+    .mem_data_o(lsu_mem_data),
+    .mem_write_byte_sel_o(lsu_mem_write_byte_sel)
 );
 
 endmodule

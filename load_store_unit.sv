@@ -1,14 +1,13 @@
 module load_store_unit(
     input  ls_unit_op_e      ls_unit_opcode_i,
     input  logic [32 - 1:0]  addr_i,
-    input  logic             lsu_en_i,
 
     input  logic [32 - 1:0]  reg_data_i,
     output logic [32 - 1:0]  reg_data_o,
 
     input  logic [32 - 1:0]  mem_data_i,
     output logic [32 - 1:0]  mem_data_o,
-    output logic [4 - 1:0]   mem_write_mask_o
+    output logic [4 - 1:0]   mem_write_byte_sel_o
 );
 
 logic [8 - 1:0]  data_byte;
@@ -71,10 +70,10 @@ end
 // Mem write mask output
 always_comb begin
     case(ls_unit_opcode_i)
-        LS_STORE_BYTE: mem_write_mask_o = 4'b0001 << addr_i[1:0];
-        LS_STORE_HALF: mem_write_mask_o = 4'b0011 << (addr_i[1] * 2);
-        LS_STORE_WORD: mem_write_mask_o = 4'b1111;
-        default:       mem_write_mask_o = 4'bxxxx;
+        LS_STORE_BYTE: mem_write_byte_sel_o = 4'b0001 << addr_i[1:0];
+        LS_STORE_HALF: mem_write_byte_sel_o = 4'b0011 << (addr_i[1] * 2);
+        LS_STORE_WORD: mem_write_byte_sel_o = 4'b1111;
+        default:       mem_write_byte_sel_o = 4'bxxxx;
     endcase
 end
 
