@@ -66,4 +66,17 @@ package riscv_pkg;
         RD_RESULT_SRC_PC4 = 2'b10
     } rd_result_src_e;
 
+    typedef enum logic [4 - 1:0] {
+        LS_S_LOAD_BYTE  = 4'b0000, // {Opcode[5]=0, funct3=000}
+        LS_S_LOAD_HALF  = 4'b0001, // {Opcode[5]=0, funct3=001}
+        LS_LOAD_WORD    = 4'b0010,   // {Opcode[5]=0, funct3=010}
+
+        LS_STORE_BYTE   = 4'b1000, // {Opcode[5]=1, funct3=000}
+        LS_STORE_HALF   = 4'b1001, // {Opcode[5]=1, funct3=001}
+        LS_STORE_WORD   = 4'b1010,   // {Opcode[5]=1, funct3=010}
+
+        LS_U_LOAD_BYTE  = 4'b0100, // {Opcode[5]=0, funct3=100}
+        LS_U_LOAD_HALF  = 4'b0101 // {Opcode[5]=0, funct3=101}
+    } ls_unit_op_e;
+
 endpackage
